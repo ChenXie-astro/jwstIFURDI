@@ -1,2 +1,2 @@
-# jwst_IFU_RDI
+# jwstIFURDI
 Reference-star differential imaging on JWST/NIRSpec IFU
