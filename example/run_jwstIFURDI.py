@@ -1,7 +1,7 @@
 
 from time import time
 import os
-from jwstIFURDI.jwstIFURDI import IFU_centering
+from jwstIFURDI import IFU_centering
 
 
 if __name__ == "__main__":
