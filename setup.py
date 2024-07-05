@@ -1,59 +1,38 @@
-#!/usr/bin/env python
-from setuptools import setup, find_packages
-try:
-    from distutils.config import ConfigParser
-except ImportError:
-    from configparser import ConfigParser
+from setuptools import setup
 
-# Read configuration variables in from setup.cfg
-conf = ConfigParser()
-conf.read(['setup.cfg'])
+# read the contents of your README file
+from os import path
+this_directory = path.abspath(path.dirname(__file__))
+with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
+    long_description = f.read()
 
-# Get some config values
-metadata = dict(conf.items('metadata'))
-PACKAGENAME = metadata.get('package_name', 'packagename')
-DESCRIPTION = metadata.get('description', '')
-AUTHOR = metadata['author']
-AUTHOR_EMAIL = metadata['author_email']
-URL = metadata['url']
-LICENSE = metadata['license']
-VERSION = metadata['version']
-
-
-
-
-
-# import numpy as np
-# from astropy.io import fits
-
-# from skimage.transform import rotate
-# from time import time
-# import os
-# import numpy as np
-# from scipy.interpolate import interp2d
-# from scipy import ndimage
-# from scipy import optimize
-
-# # from scipy.integrate import simps
-# from scipy.ndimage import fourier_shift
-# from scipy.ndimage import shift as spline_shift
+# setup
 setup(
-    name=PACKAGENAME,
-    version=VERSION,
-    author=AUTHOR,
-    author_email=AUTHOR_EMAIL,
-    description=DESCRIPTION,
-    license=LICENSE,
-    url=URL,
-    py_modules=["jwstIFURDI"],
+    name='jwstIFURDI',
+    version='1.0',
+    description='Reference-star differential imaging on JWST/NIRSpec IFU',
+    long_description=long_description,
+    long_description_content_type='text/markdown',
+    url='https://github.com/ChenXie-astro/jwstIFURDI',
+    author='Chen Xie',
+    author_email='cx@jhu.edu',
+    license='MIT',
     classifiers=[
-        "License :: OSI Approved :: BSD License",
-        "Topic :: Scientific/Engineering :: Astronomy",
-        "Intended Audience :: Science/Research",
-        "Operating System :: OS Independent",
-        "Programming Language :: Python",
+        'Development Status :: 5 - Production/Stable',
+        'Intended Audience :: Science/Research ',
+        'Topic :: Scientific/Engineering :: Astronomy',
+        'Programming Language :: Python :: 3',
+        'License :: OSI Approved :: MIT License'
     ],
-    install_requires=['numpy', 'scipy', 'astropy', 'skimage'],
-    packages=find_packages(),
-    package_data={},
+    keywords='jwst NIRSpec ifu rdi reduction disk pipeline',
+    packages=['jwstIFURDI'],
+    install_requires=[
+        'numpy', 'scipy', 'astropy', 'pandas', 'matplotlib', 'skimage', 'debrisdiskfm', 'emcee', 'corner', 'diskmap'
+    ],
+    include_package_data=True,
+    # package_data={
+    #     'sphere': ['data/*.txt', 'data/*.dat', 'data/*.fits',
+    #                'instruments/*.ini', 'instruments/*.dat'],
+    # },
+    zip_safe=False
 )
