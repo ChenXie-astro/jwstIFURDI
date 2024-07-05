@@ -9,7 +9,8 @@ import numpy as np
 from scipy.interpolate import interp2d
 from scipy import ndimage
 from scipy import optimize
-
+import matplotlib.pyplot as plt
+import matplotlib.gridspec as gridspec
 # from scipy.integrate import simps
 from scipy.ndimage import fourier_shift
 from scipy.ndimage import shift as spline_shift
@@ -77,6 +78,96 @@ def imshift(image,
             return spline_shift(image, shift[::-1],order=5, **kwargs)
         else:
             raise UserWarning('Image shift method "' + method + '" is not known')
+
+
+
+def shift(array, shift_value, method='roll', ):
+    '''
+    Shift a 1D or 2D input array.
+    
+    The array can be shift either using roll.
+
+    Note that if the shifting value is an integer, the function uses
+    numpy roll procedure to shift the array. The user can force to use
+    np.roll, and in that case the function will round the shift value
+    to the nearest integer values.
+    
+    Parameters
+    ----------
+    array : array
+        The array to be shifted
+    
+    shift_value : float or sequence
+        The shift along the axes. If a float, shift_value is the same for each axis. 
+        If a sequence, shift_value should contain one value for each axis.
+    
+
+    Returns
+    -------
+    shift : array
+        The shifted array
+
+    '''
+
+    method = method.lower()
+    
+    # array dimensions
+    Ndim = array.ndim
+    dims = array.shape
+    if (Ndim != 1) and (Ndim != 2):
+        raise ValueError('This function can shift only 1D or 2D arrays')
+
+    # check if shift values are int and automatically change method in case they are
+    if (shift_value.dtype.kind == 'i'):
+        method = 'roll'
+    else:
+        # force integer values
+        if method is 'roll':
+            shift_value = np.round(shift_value)
+        
+
+    # detects NaN and replace them with real values
+    mask = None
+    nan_mask = np.isnan(array)
+    if np.any(nan_mask):
+        medval = np.nanmedian(array)
+        array[nan_mask] = medval
+
+        mask = np.zeros_like(array)
+        mask[nan_mask] = 1
+        
+        mask = _shift_interp_builtin(mask, shift_value, mode='constant', cval=1)
+
+    # shift with appropriate function                
+    if (method == 'roll'):
+        shift_value = np.round(shift_value).astype(int)
+        shifted = _shift_roll(array, shift_value)
+    else:
+        raise ValueError('Unknown shift method \'{0}\''.format(method))
+
+    # puts back NaN
+    if mask is not None:
+        shifted[mask >= 0.5] = np.nan
+    
+    return shifted
+
+def _shift_interp_builtin(array, shift_value, mode='constant', cval=0):
+    shifted = ndimage.shift(array, np.flipud(shift_value), order=3, mode=mode, cval=cval)
+
+    return shifted
+
+
+def _shift_roll(array, shift_value):
+    Ndim  = array.ndim
+
+    if (Ndim == 1):
+        shifted = np.roll(array, shift_value[0])
+    elif (Ndim == 2):
+        shifted = np.roll(np.roll(array, shift_value[0], axis=1), shift_value[1], axis=0)
+    else:
+        raise ValueError('This function can shift only 1D or 2D arrays')
+        
+    return shifted
 
 
 
@@ -152,3 +243,71 @@ def derotate_and_combine(cube, angles, method):
     return image_out, cube_out
 
 
+
+
+
+
+def plot_psf_correction_factor(input_1D_spec, header, plotname, savepath, color, legend):
+    """
+    plotting the obtained psf correction factors
+    """
+    pdfname = savepath + '{0}.pdf'.format(plotname)
+    pdfname = savepath + '{0}.png'.format(plotname)
+
+    fig = plt.figure(figsize=(9,6), dpi=300)
+    fig.subplots_adjust(hspace=0.0, wspace=0.000, bottom=0.08, top=0.96, left=0.1, right=0.96)
+    gs = gridspec.GridSpec(1, 1,)
+    plt.rcParams['xtick.direction'] = 'in' 
+    plt.rcParams['ytick.direction'] = 'in' 
+    # plt.rcParams['xtick.top'] = True
+    # plt.rcParams['ytick.right'] = True
+    plt.rcParams['axes.spines.right'] = False
+    plt.rcParams['axes.spines.top'] = False
+
+    topplot = plt.subplot(gs[0], )
+    #######  add line indicators ######
+    # arr = mpatches.FancyArrowPatch((2.7, 2.1), (3.35 , 2.1),
+    #                             arrowstyle='|-|', mutation_scale=10, lw=2, color = 'gray')
+    # topplot.add_patch(arr)
+    # topplot.annotate(r"$\rm{H_2O}$", (.5, 1.2), xycoords=arr, ha='center', va='bottom', size = 25,  color = 'gray', weight='bold')
+    # # plt.rcParams['font.serif'] =
+    # arr = mpatches.FancyArrowPatch((3.1, 1.8), (3.1, 2),
+    #                             arrowstyle='-', mutation_scale=10, lw=2, color = 'gray')
+    # topplot.add_patch(arr)
+ 
+    # arr = mpatches.FancyArrowPatch((3.8, 2.5), (4.8 , 2.5),
+    #                             arrowstyle='|-|', mutation_scale=10, lw=2, color = 'gray')
+    # topplot.add_patch(arr)
+    # topplot.annotate(r"$\rm{H_2O}$", (.5, 1.2), xycoords=arr, ha='center', va='bottom', size = 25,  color = 'gray', weight='bold')
+
+
+    nz = input_1D_spec.shape[0]
+    print(nz)
+    z_wave = np.arange(header['CRVAL3'], header['CRVAL3']+ (nz)*header['CDELT3'], header['CDELT3'])
+    # topplot = plt.subplot(gs[0])
+    plt.plot(z_wave[20:-21], input_1D_spec[20:-21], lw=2, alpha=1, color = color, label=legend)
+
+
+    ylim_min = 0.8
+    ylim_max = 1.2
+    # plt.ylim([ylim_min, ylim_max])
+    xlim_min = 0.5    
+    xlim_max = 5.5
+    plt.xlim([xlim_min, xlim_max])
+
+    plt.tick_params(axis='both', which='major', labelsize=16)
+    plt.xlabel(r'Wavelength ($\rm \mu m$)', fontsize=16)
+    plt.ylabel(r' PSF convolution ratio', fontsize=16)
+
+    topplot.tick_params(axis='both', which='major', labelsize=16, length=8, width=1.6, pad=10)
+    for axis in ['top','bottom','left','right']:
+        topplot.spines[axis].set_linewidth(1.6)
+    legend = plt.legend(loc='best', fontsize=14,frameon=False)
+
+    fig.align_ylabels()
+    fig.tight_layout()
+    plt.savefig(pdfname, transparent= True)
+    plt.clf()
+
+
+    
