@@ -25,7 +25,7 @@ setup(
         'License :: OSI Approved :: MIT License'
     ],
     keywords='jwst NIRSpec ifu rdi reduction disk pipeline',
-    packages=['jwstIFURDI'],
+    packages=['jwstifurdi'],
     install_requires=[
         'numpy', 'scipy', 'astropy', 'pandas', 'matplotlib', 'scikit-image', 'debrisdiskfm', 'emcee', 'corner', 'diskmap'
     ],
