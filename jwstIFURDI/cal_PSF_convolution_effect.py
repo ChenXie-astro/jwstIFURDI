@@ -28,7 +28,7 @@ def calculate_psf_covolution_ratio(x_all, psf_filename, savepath, disk_extract_m
         convolved_models = fftconvolve(model, psf, mode='same')
 
     fits.writeto(savepath+'disk_model_2D.fits', model, overwrite=True)
-    fits.writeto(savepath+'disk_model_convolved_3D.fits', convolved_models, overwrite=True)
+    fits.writeto(savepath+'disk_model_convolved_3D_no_aligned.fits', convolved_models, overwrite=True)
 
 
     """
@@ -39,7 +39,7 @@ def calculate_psf_covolution_ratio(x_all, psf_filename, savepath, disk_extract_m
     convolved_models_shift = np.zeros((psf.shape))
     for z in range(nz):
         convolved_models_shift[z] = imshift(convolved_models[z].astype(float), [offset_x_sci, offset_y_sci], method = 'fourier', )
-    fits.writeto(savepath+'disk_model_convolved_3D_shifted.fits', convolved_models_shift, overwrite=True)
+    fits.writeto(savepath+'disk_model_convolved_3D_aligned.fits', convolved_models_shift, overwrite=True)
 
 
     ###### runing a sanity check  ######
@@ -73,17 +73,10 @@ def calculate_psf_covolution_ratio(x_all, psf_filename, savepath, disk_extract_m
     PSF_convolution_ratio = np.nansum(disk_regions_convolved, axis=(1,2)) / np.nansum(disk_regions_model, axis=(0,1,2))
     fits.writeto(savepath + '/sanity_check/{0}_extracted_disk_regions_{1}.fits'.format(sci_target_name, extracting_region), disk_regions_convolved, sci_header, overwrite= True)
 
-    disk_mask_full_disk = fits.getdata('/Users/sxie/Desktop/JWST/ms_post_processing/make_disk_mask/masks/disk_mask_0_1_2D_for_PSF_convolution_Test.fits')
-    PSF_convolution_ratio_full_image = np.nansum(convolved_models_shift*disk_mask_full_disk, axis=(1,2)) / np.nansum(model*disk_mask_full_disk, axis=(0, 1, 2))
-    fits.writeto(savepath + '/sanity_check/{0}_extracted_disk_regions_full_disk.fits'.format(sci_target_name), convolved_models*disk_mask_full_disk, sci_header, overwrite= True)
-
-
     #####  making plots  ####
     plot_psf_correction_factor(PSF_convolution_ratio, sci_header, '/PSF_covolution_correction/{0}_PSF_convolution_ratio_{1}'.format(sci_target_name, extracting_region), savepath, '#EA8379', legend = 'PSF convolution ratio')
-    plot_psf_correction_factor(PSF_convolution_ratio_full_image, sci_header, '/PSF_covolution_correction/{0}_PSF_convolution_ratio_full_disk_image'.format(sci_target_name), savepath, '#EA8379', legend = 'PSF convolution ratio (full image)')
     ##### saving results ####
     fits.writeto(savepath + '/PSF_covolution_correction/{0}_PSF_convolution_ratio_{1}.fits'.format(sci_target_name, extracting_region), PSF_convolution_ratio, sci_header, overwrite= True)
-    fits.writeto(savepath + '/PSF_covolution_correction/{0}_PSF_convolution_ratio_full_disk.fits'.format(sci_target_name), PSF_convolution_ratio_full_image, sci_header, overwrite= True)
 
     return PSF_convolution_ratio 
 
