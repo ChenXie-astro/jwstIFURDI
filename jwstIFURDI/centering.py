@@ -264,7 +264,7 @@ def spike_img_weighted(input_cube, x_center, y_center, filter_size):
 
     return  weight_map 
  
-def find_center(sci_cube, ref_cube, theta_ifu_sci, theta_ifu_ref, x_center, y_center, filter_size, savepath):
+def find_center(sci_cube, ref_cube, theta_ifu_sci, theta_ifu_ref, x_center, y_center, filter_size, savepath, sci_target_name):
     nz, ny, nx = sci_cube.shape
 
     weight_map_sci = spike_img_weighted(sci_cube, x_center, y_center, filter_size)
@@ -328,7 +328,7 @@ def IFU_centering(sci_filename, ref_filename,   savepath,  sci_target_name, thet
 
     nz, ny, nx = sci_cube.shape
     
-    offset_x_sci, offset_y_sci, offset_x_ref, offset_y_ref = find_center(sci_cube[channel_shortest:channel_longest], ref_cube[channel_shortest:channel_longest], theta_ifu_sci, theta_ifu_ref, x_center, y_center, filter_size, savepath)
+    offset_x_sci, offset_y_sci, offset_x_ref, offset_y_ref = find_center(sci_cube[channel_shortest:channel_longest], ref_cube[channel_shortest:channel_longest], theta_ifu_sci, theta_ifu_ref, x_center, y_center, filter_size, savepath, sci_target_name)
     output_information('before first alignment', nx, ny, offset_x_sci, offset_y_sci, offset_x_ref, offset_y_ref)
 
 
@@ -343,7 +343,7 @@ def IFU_centering(sci_filename, ref_filename,   savepath,  sci_target_name, thet
         aligned_sci_cube[z, :, :] = imshift(sci_cube[z, :,:].astype(float), [offset_x_sci, offset_y_sci], method = 'spline', )
         aligned_ref_cube[z, :, :] = imshift(ref_cube[z, :,:].astype(float), [offset_x_ref, offset_y_ref], method = 'spline', )
     
-    residual_offset_x_sci, residual_offset_y_sci, residual_offset_x_ref, residual_offset_y_ref = find_center(aligned_sci_cube[channel_shortest:channel_longest], aligned_ref_cube[channel_shortest:channel_longest], theta_ifu_sci, theta_ifu_ref, x_center, y_center,  filter_size, savepath)
+    residual_offset_x_sci, residual_offset_y_sci, residual_offset_x_ref, residual_offset_y_ref = find_center(aligned_sci_cube[channel_shortest:channel_longest], aligned_ref_cube[channel_shortest:channel_longest], theta_ifu_sci, theta_ifu_ref, x_center, y_center,  filter_size, savepath, sci_target_name)
     output_information('first alignment residual', nx, ny, residual_offset_x_sci, residual_offset_y_sci, residual_offset_x_ref, residual_offset_y_ref)
 
 
@@ -369,7 +369,7 @@ def IFU_centering(sci_filename, ref_filename,   savepath,  sci_target_name, thet
 
 
     # search for the PA offsets between sci and ref osbervations
-    offset_x_sci, offset_y_sci, offset_x_ref, offset_y_ref = find_center(new_aligned_sci_cube[channel_shortest:channel_longest], new_aligned_ref_cube[channel_shortest:channel_longest], theta_ifu_sci, theta_ifu_ref, x_center, y_center, filter_size, savepath)
+    offset_x_sci, offset_y_sci, offset_x_ref, offset_y_ref = find_center(new_aligned_sci_cube[channel_shortest:channel_longest], new_aligned_ref_cube[channel_shortest:channel_longest], theta_ifu_sci, theta_ifu_ref, x_center, y_center, filter_size, savepath, sci_target_name)
     output_information('final alignment residual', nx, ny, offset_x_sci, offset_y_sci, offset_x_ref, offset_y_ref)
 
     sci_header['CRPIX1'] = nx//2 
@@ -477,7 +477,7 @@ def IFU_centering(sci_filename, ref_filename,   savepath,  sci_target_name, thet
 
 
     # ################### check residual #############
-    offset_x_sci, offset_y_sci, offset_x_ref, offset_y_ref = find_center(new_aligned_sci_cube[channel_shortest:channel_longest], aligned_ref_cube_rotated[channel_shortest:channel_longest], theta_ifu_sci, theta_ifu_ref, x_center, y_center,  filter_size, savepath)
+    offset_x_sci, offset_y_sci, offset_x_ref, offset_y_ref = find_center(new_aligned_sci_cube[channel_shortest:channel_longest], aligned_ref_cube_rotated[channel_shortest:channel_longest], theta_ifu_sci, theta_ifu_ref, x_center, y_center,  filter_size, savepath, sci_target_name)
     output_information('after rotation', nx, ny, offset_x_sci, offset_y_sci, offset_x_ref, offset_y_ref)
 
 
