@@ -64,19 +64,19 @@ def calculate_psf_covolution_ratio(x_all, psf_filename, savepath, disk_extract_m
     disk_regions_model[disk_regions_model==0] = np.nan
     disk_regions_convolved[disk_regions_convolved==0] = np.nan
 
-    if not os.path.exists(savepath+'/sanity_check/'):
-        os.makedirs(savepath+'/sanity_check/')
-    if not os.path.exists(savepath+'/sanity_check/PSF_covolution_correction/'):
-        os.makedirs(savepath+'/sanity_check/PSF_covolution_correction/')
+    if not os.path.exists(savepath+'sanity_check/'):
+        os.makedirs(savepath+'sanity_check/')
+    if not os.path.exists(savepath+'PSF_covolution_correction/'):
+        os.makedirs(savepath+'PSF_covolution_correction/')
 
 
     PSF_convolution_ratio = np.nansum(disk_regions_convolved, axis=(1,2)) / np.nansum(disk_regions_model, axis=(0,1,2))
-    fits.writeto(savepath + '/sanity_check/{0}_extracted_disk_regions_{1}.fits'.format(sci_target_name, extracting_region), disk_regions_convolved, sci_header, overwrite= True)
+    fits.writeto(savepath + 'sanity_check/{0}_extracted_disk_regions_{1}.fits'.format(sci_target_name, extracting_region), disk_regions_convolved, sci_header, overwrite= True)
 
     #####  making plots  ####
     plot_psf_correction_factor(PSF_convolution_ratio, sci_header, '/PSF_covolution_correction/{0}_PSF_convolution_ratio_{1}'.format(sci_target_name, extracting_region), savepath, '#EA8379', legend = 'PSF convolution ratio')
     ##### saving results ####
-    fits.writeto(savepath + '/PSF_covolution_correction/{0}_PSF_convolution_ratio_{1}.fits'.format(sci_target_name, extracting_region), PSF_convolution_ratio, sci_header, overwrite= True)
+    fits.writeto(savepath + 'PSF_covolution_correction/{0}_PSF_convolution_ratio_{1}.fits'.format(sci_target_name, extracting_region), PSF_convolution_ratio, sci_header, overwrite= True)
 
     return PSF_convolution_ratio 
 
