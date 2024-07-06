@@ -582,3 +582,62 @@ def plot_multiple_spectrum_errorbar_old(input_1D_spec_1, input_1D_spec_error_1, 
     plt.savefig(pdfname, transparent= True)
     plt.clf()
 
+
+def plot_four_spectrum_errorbar_old(input_1D_spec_1, input_1D_spec_error_1, input_1D_spec_2, input_1D_spec_error_2, input_1D_spec_3, input_1D_spec_error_3, input_1D_spec_4, input_1D_spec_error_4, header, plotname, savepath, label_1, label_2, label_3, label_4):
+    blue = '#0099ff'
+    # pdfname = 'jet_sepctrum.pdf'# % (output_name)
+    pdfname = savepath + '{0}.pdf'.format(plotname)
+    fig = plt.figure(figsize=(10,5.2), dpi=300)
+
+    fig.subplots_adjust(hspace=0.0, wspace=0.000, bottom=0.08, top=0.96, left=0.1, right=0.96)
+    gs = gridspec.GridSpec(1, 1,)
+    plt.rcParams['xtick.direction'] = 'in' 
+    plt.rcParams['ytick.direction'] = 'in' 
+    plt.rcParams['xtick.top'] = True
+    plt.rcParams['ytick.right'] = True
+
+    z_wave = np.arange(header['CRVAL3'], header['CRVAL3']+ (nz)*header['CDELT3'], header['CDELT3'], )
+
+    topplot = plt.subplot(gs[0], )
+
+    # plt.errorbar(z_wave, input_1D_spec_1/input_1D_spec_1[381], input_1D_spec_error_1/input_1D_spec_1[381], 0,  color = '#E07B54', label=label_1, fmt='o', markersize=1, alpha=0.4, ls='none', zorder=7)
+    # plt.errorbar(z_wave, input_1D_spec_2/input_1D_spec_2[381], input_1D_spec_error_2/input_1D_spec_2[381], 0,  color = '#E1C855', label=label_2, fmt='o', markersize=1, alpha=0.4, ls='none', zorder=6)
+    # plt.errorbar(z_wave, input_1D_spec_3/input_1D_spec_3[381], input_1D_spec_error_3/input_1D_spec_3[381], 0,  color = '#51B1B7', label=label_3, fmt='o', markersize=1, alpha=0.4, ls='none', zorder=6)
+    # plt.errorbar(z_wave, input_1D_spec_4/input_1D_spec_4[381], input_1D_spec_error_4/input_1D_spec_4[381], 0,  color = '#818181', label=label_4, fmt='o', markersize=1, alpha=0.4, ls='none', zorder=6)
+
+    markers, caps, bars = plt.errorbar(z_wave, input_1D_spec_1/input_1D_spec_1[380], input_1D_spec_error_1/input_1D_spec_1[380], 0,  color = '#E07B54', label=label_1, fmt='o', markersize=1, alpha=0.8, ls='-', zorder=7)
+    [cap.set_alpha(0.2) for cap in caps]
+    [bar.set_alpha(0.2) for bar in bars]
+    markers, caps, bars = plt.errorbar(z_wave, input_1D_spec_2/input_1D_spec_2[380], input_1D_spec_error_2/input_1D_spec_2[380], 0,  color = '#E1C855', label=label_2, fmt='o', markersize=1, alpha=0.8, ls='-', zorder=6)
+    [cap.set_alpha(0.2) for cap in caps]
+    [bar.set_alpha(0.2) for bar in bars]
+    markers, caps, bars = plt.errorbar(z_wave, input_1D_spec_3/input_1D_spec_3[380], input_1D_spec_error_3/input_1D_spec_3[380], 0,  color = '#51B1B7', label=label_3, fmt='o', markersize=1, alpha=0.8, ls='-', zorder=6)
+    [cap.set_alpha(0.2) for cap in caps]
+    [bar.set_alpha(0.2) for bar in bars]
+    markers, caps, bars = plt.errorbar(z_wave, input_1D_spec_4/input_1D_spec_4[380], input_1D_spec_error_4/input_1D_spec_4[380], 0,  color = '#818181', label=label_4, fmt='o', markersize=1, alpha=0.8, ls='-', zorder=6)
+    [cap.set_alpha(0.2) for cap in caps]
+    [bar.set_alpha(0.2) for bar in bars]
+
+    ylim_min = 0.4   
+    ylim_max = 2.3
+    plt.ylim([ylim_min, ylim_max])
+    xlim_min = 0.5    
+    xlim_max = 5.5
+    plt.xlim([xlim_min, xlim_max])
+    plt.tick_params(axis='both', which='major', labelsize=16)
+
+    plt.ylabel(r'$F_{\rm{disk}}$/$F_{\rm{star}}$ (normalized)',  fontsize=16)
+    plt.xlabel(r'Wavelength ($\rm \mu m$)', fontsize=16)
+    plt.axvline(x=3.1, color ='gray', ls='--', lw=1,  alpha=0.6)
+    plt.axvline(x=4.268, color ='gray', ls='--', lw=1,  alpha=0.6)
+
+    topplot.tick_params(axis='both', which='major', labelsize=16, length=8, width=1.6, pad=10)
+    for axis in ['top','bottom','left','right']:
+        topplot.spines[axis].set_linewidth(1.6)
+
+    plt.tick_params(axis='both', which='major', labelsize=16)
+    plt.legend(loc='upper left', fontsize=15,frameon=True)
+    plt.tick_params(axis='both', which='major', labelsize=16)
+    fig.tight_layout()
+    plt.savefig(pdfname, transparent= True)
+    plt.clf()

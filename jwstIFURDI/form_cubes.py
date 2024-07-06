@@ -2,7 +2,7 @@ import numpy as np
 from astropy.io import fits
 from scipy import ndimage
 from scipy import optimize
-from jwstIFURDI.toolbox import plot_scaling_factor, plot_throughput, plot_spectrum_errorbar, plot_multiple_spectrum_errorbar_old, plot_four_spectrum_errorbar_old
+# from jwstIFURDI.toolbox import plot_scaling_factor, plot_throughput, plot_spectrum_errorbar, plot_multiple_spectrum_errorbar_old, plot_four_spectrum_errorbar_old
 
 ####################################################################
 
