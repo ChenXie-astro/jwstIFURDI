@@ -4,7 +4,7 @@ Reference-star differential imaging on JWST/NIRSpec IFU
 Information
 -----------
 
-jwstIFURDI was designed to perform high-contrast imaging for J[JWST/NIRSpec IFU](https://jwst-docs.stsci.edu/jwst-near-infrared-spectrograph#gsc.tab=0) observations to extract disk reflectance spectrum.  
+jwstIFURDI was designed to perform high-contrast imaging for [JWST/NIRSpec IFU](https://jwst-docs.stsci.edu/jwst-near-infrared-spectrograph#gsc.tab=0) observations to extract disk reflectance spectrum.  
 
 Point spread function (PSF) subtraction is essential to detect faint planets and circumstellar disks because the NIRSpec IFU does not have a coronagraph to suppress the light from the host star. 
 We performed PSF subtraction from every spectral channel using reference-star differential imaging (RDI) to remove the stellar PSF in the spatial direction.
@@ -38,7 +38,7 @@ Tested: Python 3.7.7, numpy 1.21.6, scipy 1.7.3, matplotlib 3.3.0, scikit-image 
 Run MCMC disk modeling
 ----------------------
 Info:
-
+To perform the MCMC disk modeling
 ```
 % python MCMC_disk_modeling.py
 ```
@@ -53,6 +53,7 @@ Info
 
 Inputs
 
+To perform RDI and extract the target spectrum
 ```
 % python run_jwstIFURDI.py
 ```
