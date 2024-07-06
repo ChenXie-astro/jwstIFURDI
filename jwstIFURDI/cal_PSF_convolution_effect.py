@@ -64,11 +64,11 @@ def calculate_psf_covolution_ratio(x_all, psf_filename, savepath, disk_extract_m
     disk_regions_model[disk_regions_model==0] = np.nan
     disk_regions_convolved[disk_regions_convolved==0] = np.nan
 
-    if os.path.exists(savepath+'/sanity_check/'):
-        pass
-    else:
+    if not os.path.exists(savepath+'/sanity_check/'):
         os.makedirs(savepath+'/sanity_check/')
-        os.makedirs(savepath+'/PSF_covolution_correction/')
+    if not os.path.exists(savepath+'/sanity_check/PSF_covolution_correction/'):
+        os.makedirs(savepath+'/sanity_check/PSF_covolution_correction/')
+
 
     PSF_convolution_ratio = np.nansum(disk_regions_convolved, axis=(1,2)) / np.nansum(disk_regions_model, axis=(0,1,2))
     fits.writeto(savepath + '/sanity_check/{0}_extracted_disk_regions_{1}.fits'.format(sci_target_name, extracting_region), disk_regions_convolved, sci_header, overwrite= True)
