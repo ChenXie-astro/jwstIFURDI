@@ -56,6 +56,7 @@ Inputs
 ```
 % python run_jwstIFURDI.py
 ```
+Post-processing parameters can be modified in the Python script. The aboved Python script can be divded into 6 steps.
 
 Details:
 
