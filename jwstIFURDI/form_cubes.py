@@ -108,6 +108,7 @@ def extract_spec(disk_residual_cube, residual_cube_disk_subtracted, disk_model_r
 
     nz = disk_residual_cube.shape[0] 
     ######  calculate noise  ######
+    band_width = 100
     new_std_1D = np.zeros(noise_region_1D.shape)
     for z in range(nz):
         if z <= band_width//2:
@@ -165,6 +166,7 @@ def extract_spec_no_stellar_color(disk_residual_cube, residual_cube_disk_subtrac
     noise_region_1D = np.nansum(residual_cube_disk_subtracted* weight_map , axis=(1,2))
 
     nz = disk_residual_cube.shape[0] 
+    band_width = 100
     ######  calculate noise  ######
     new_std_1D = np.zeros(noise_region_1D.shape)
     for z in range(nz):
