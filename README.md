@@ -4,7 +4,7 @@ Reference-star differential imaging on JWST/NIRSpec IFU
 Information
 -----------
 
-jwstIFURDI was design to perform high-contrast imaging for J[JWST/NIRSpec IFU](https://jwst-docs.stsci.edu/jwst-near-infrared-spectrograph#gsc.tab=0) observations to extract disk reflectance spectrum.  
+jwstIFURDI was designed to perform high-contrast imaging for J[JWST/NIRSpec IFU](https://jwst-docs.stsci.edu/jwst-near-infrared-spectrograph#gsc.tab=0) observations to extract disk reflectance spectrum.  
 
 Point spread function (PSF) subtraction is essential to detect faint planets and circumstellar disks because the NIRSpec IFU does not have a coronagraph to suppress the light from the host star. 
 We performed PSF subtraction from every spectral channel using reference-star differential imaging (RDI) to remove the stellar PSF in the spatial direction.
@@ -47,7 +47,7 @@ Output
 
 Note
 
-Run RDI and extract target spectrum 
+Run RDI and extract the target spectrum 
 -----------------------------------
 Info 
 
@@ -109,7 +109,7 @@ doi: \href{https://zenodo.org/badge/latestdoi/141328805}{10.5281/zenodo.2398963}
 }
 ```
 
-If you perform the disk modling using jwstIFURDI.MMB_anadisk_model, please also cite
+If you perform the disk modeling using jwstIFURDI.MMB_anadisk_model, please also cite
 ```
 @ARTICLE{2015ApJ...811...18M,
        author = {{Millar-Blanchaer}, Maxwell A. and {Graham}, James R. and {Pueyo}, Laurent and {Kalas}, Paul and {Dawson}, Rebekah I. and {Wang}, Jason and {Perrin}, Marshall D. and {moon}, Dae-Sik and {Macintosh}, Bruce and {Ammons}, S. Mark and {Barman}, Travis and {Cardwell}, Andrew and {Chen}, Christine H. and {Chiang}, Eugene and {Chilcote}, Jeffrey and {Cotten}, Tara and {De Rosa}, Robert J. and {Draper}, Zachary H. and {Dunn}, Jennifer and {Duch{\^e}ne}, Gaspard and {Esposito}, Thomas M. and {Fitzgerald}, Michael P. and {Follette}, Katherine B. and {Goodsell}, Stephen J. and {Greenbaum}, Alexandra Z. and {Hartung}, Markus and {Hibon}, Pascale and {Hinkley}, Sasha and {Ingraham}, Patrick and {Jensen-Clem}, Rebecca and {Konopacky}, Quinn and {Larkin}, James E. and {Long}, Douglas and {Maire}, J{\'e}r{\^o}me and {Marchis}, Franck and {Marley}, Mark S. and {Marois}, Christian and {Morzinski}, Katie M. and {Nielsen}, Eric L. and {Palmer}, David W. and {Oppenheimer}, Rebecca and {Poyneer}, Lisa and {Rajan}, Abhijith and {Rantakyr{\"o}}, Fredrik T. and {Ruffio}, Jean-Baptiste and {Sadakuni}, Naru and {Saddlemyer}, Leslie and {Schneider}, Adam C. and {Sivaramakrishnan}, Anand and {Soummer}, Remi and {Thomas}, Sandrine and {Vasisht}, Gautam and {Vega}, David and {Wallace}, J. Kent and {Ward-Duong}, Kimberly and {Wiktorowicz}, Sloane J. and {Wolff}, Schuyler G.},
