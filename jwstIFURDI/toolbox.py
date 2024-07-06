@@ -1,18 +1,11 @@
 # from matplotlib.pyplot import *
 import numpy as np
-from astropy.io import fits
-
 from skimage.transform import rotate
-from time import time
-import os
 import numpy as np
-from scipy.interpolate import interp2d
 from scipy import ndimage
-from scipy import optimize
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 import matplotlib.patches as mpatches
-# from scipy.integrate import simps
 from scipy.ndimage import fourier_shift
 from scipy.ndimage import shift as spline_shift
 
@@ -330,8 +323,6 @@ def plot_scaling_factor(z_wave, input_y, plotname, savepath, ):
     plt.axvline(x=4.26, color ='grey', ls='--', lw=1,  alpha=0.6)
     plt.axvline(x=3.1, color ='grey', ls='--', lw=1,  alpha=0.6)
 
-    nz = input_y.shape[0]
-    print(nz)
     # z_wave = np.arange(header['CRVAL3'], header['CRVAL3']+ (nz)*header['CDELT3'], header['CDELT3'])
     plt.plot(z_wave, input_y, '-', lw=3.5, alpha=1, color ='#E07B54', zorder=10)
 
@@ -377,8 +368,6 @@ def plot_throughput(z_wave, input_y, plotname, savepath, ):
     # plt.axvline(x=3.1, color ='grey', ls='--', lw=1,  alpha=0.6)
     # plt.axvline(x=1.65, color ='grey', ls='--', lw=1,  alpha=0.6)
     
-    nz = input_y.shape[0]
-    print(nz)
     # z_wave = np.arange(header['CRVAL3'], header['CRVAL3']+ (nz)*header['CDELT3'], header['CDELT3'])
     plt.plot(z_wave[20:-21], input_y[20:-21], '-', lw=3.5, alpha=1, color ='#ECC97F',   zorder=10)
 
