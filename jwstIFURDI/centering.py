@@ -1,23 +1,15 @@
 # from matplotlib.pyplot import *
 import numpy as np
 from astropy.io import fits
-
-from skimage.transform import rotate
-from time import time
-import os
 import numpy as np
 from scipy.interpolate import interp2d
 from scipy import ndimage
 from scipy import optimize
-
-# from scipy.integrate import simps
-from scipy.ndimage import fourier_shift
-from scipy.ndimage import shift as spline_shift
 from jwstIFURDI.toolbox import imshift, derotate_and_combine
 
-"""
-pip install scikit-image==0.16.2
-"""
+# """
+# pip install scikit-image==0.16.2
+# """
 
 def samplingRegion(size_window, theta = [45, 135], m = 0.2, M = 0.8, step = 1, decimals = 2, ray = False):
     """This function returns all the coordinates of the sampling region, the center of the region is (0,0)
