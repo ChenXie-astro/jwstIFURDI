@@ -99,18 +99,14 @@ def single_frame_sub(sci_cube, ref_cube, mask_cube, ):
 
 
 def extract_spec(disk_residual_cube, residual_cube_disk_subtracted, disk_model_raw, disk_extract_mask,  stellar_spec_1D, weight_map, PSF_convolution_ratio, z_wave, extract_region):
-    
-    # if disk_extract_mask.shape[0]>2:
-    #     for z in range(nz):
-    #         disk_residual_cube[z] = disk_residual_cube[z] * disk_extract_mask[z]
-    #         residual_cube_disk_subtracted[z] = residual_cube_disk_subtracted[z]* disk_extract_mask[z]
-    # else:
+
     disk_residual_cube = disk_residual_cube * disk_extract_mask
     residual_cube_disk_subtracted = residual_cube_disk_subtracted* disk_extract_mask
     disk_model_raw = disk_model_raw  * disk_extract_mask      
     disk_spec_r2 = np.nansum(disk_residual_cube * weight_map , axis=(1,2)) #- np.nansum(halo_cube_r2_corrected, axis=(1,2))  
     noise_region_1D = np.nansum(residual_cube_disk_subtracted* weight_map , axis=(1,2))
 
+    nz = disk_residual_cube.shape[0] 
     ######  calculate noise  ######
     new_std_1D = np.zeros(noise_region_1D.shape)
     for z in range(nz):
@@ -126,7 +122,7 @@ def extract_spec(disk_residual_cube, residual_cube_disk_subtracted, disk_model_r
     residual_spec_disk_sub = np.nansum(residual_cube_disk_subtracted, axis=(1,2))
     disk_model_1D = np.nansum(disk_model_raw, axis=(1,2))
     throughput_factor_1D = (disk_spec-residual_spec_disk_sub) / disk_model_1D 
-    # throughput_factor_1D = (disk_spec) / (disk_model_1D + residual_spec_disk_sub) 
+
     ######################################
     # applying corrections
     output_disk_spec_r2_corr_throughput_corr = disk_spec_r2 / stellar_spec_1D / PSF_convolution_ratio  / throughput_factor_1D
@@ -141,19 +137,10 @@ def extract_spec(disk_residual_cube, residual_cube_disk_subtracted, disk_model_r
     else:
         num_region = np.count_nonzero(disk_extract_mask)
 
-
     # if outpur total flux within the aperture in the unit of Jy
     output_disk_spectrum[:,0] = z_wave
-    output_disk_spectrum[:,1] = output_disk_spec_r2_corr_throughput_corr *  2.352e-5 *0.1**2  
+    output_disk_spectrum[:,1] = output_disk_spec_r2_corr_throughput_corr *  2.352e-5 *0.1**2   # pixel size 0.1" x 0.1"
     output_disk_spectrum[:,2] = new_std_1D * 2.352e-5 *0.1**2    # 1 MJy/sr = 2.352e-5 Jy/arcsec^2
-
-
-    # if output the average surface brighness within the aperture
-    # output_disk_spectrum[:,0] = z_wave
-    # output_disk_spectrum[:,1] = disk_spec_r2  / PSF_convolution_ratio  / throughput_factor_1D *  2.352e-5  /num_region #*0.1**2  
-    # output_disk_spectrum[:,2] = new_std_1D *stellar_spec_1D  * 2.352e-5 /num_region#*0.1**2    # 1 MJy/sr = 2.352e-5 Jy/arcsec^2
-
-
 
     ########################################
     # remove channels affected by outliers
@@ -164,30 +151,20 @@ def extract_spec(disk_residual_cube, residual_cube_disk_subtracted, disk_model_r
     throughput_factor_1D[712:714] = np.ones((2)) * (throughput_factor_1D[711]) 
     throughput_factor_1D[715] = np.ones((1)) * (throughput_factor_1D[716]) 
     throughput_factor_1D[597:599 ] = np.ones((2)) * (throughput_factor_1D[711])
-
-    # for outmost region that is also affected by outliers 
-    if extract_region == 'outx2_E' or extract_region == 'outx2':
-        output_disk_spectrum[297:302,:] = np.ones((5, 3)) * (output_disk_spectrum[296,:]) 
-        throughput_factor_1D[297:302] = np.ones((5)) * (throughput_factor_1D[296]) 
- 
     
     return output_disk_spectrum, throughput_factor_1D
 
 
 
 def extract_spec_no_stellar_color(disk_residual_cube, residual_cube_disk_subtracted, disk_model_raw, disk_extract_mask,  stellar_spec_1D, weight_map, PSF_convolution_ratio, z_wave, extract_region):
-    
-    # if disk_extract_mask.shape[0]>2:
-    #     for z in range(nz):
-    #         disk_residual_cube[z] = disk_residual_cube[z] * disk_extract_mask[z]
-    #         residual_cube_disk_subtracted[z] = residual_cube_disk_subtracted[z]* disk_extract_mask[z]
-    # else:
+
     disk_residual_cube = disk_residual_cube * disk_extract_mask
     residual_cube_disk_subtracted = residual_cube_disk_subtracted* disk_extract_mask
     disk_model_raw = disk_model_raw  * disk_extract_mask      
     disk_spec_r2 = np.nansum(disk_residual_cube * weight_map , axis=(1,2)) #- np.nansum(halo_cube_r2_corrected, axis=(1,2))  
     noise_region_1D = np.nansum(residual_cube_disk_subtracted* weight_map , axis=(1,2))
 
+    nz = disk_residual_cube.shape[0] 
     ######  calculate noise  ######
     new_std_1D = np.zeros(noise_region_1D.shape)
     for z in range(nz):
@@ -203,7 +180,7 @@ def extract_spec_no_stellar_color(disk_residual_cube, residual_cube_disk_subtrac
     residual_spec_disk_sub = np.nansum(residual_cube_disk_subtracted, axis=(1,2))
     disk_model_1D = np.nansum(disk_model_raw, axis=(1,2))
     throughput_factor_1D = (disk_spec-residual_spec_disk_sub) / disk_model_1D 
-    # throughput_factor_1D = (disk_spec) / (disk_model_1D + residual_spec_disk_sub) 
+
     ######################################
     # applying corrections
     output_disk_spec_r2_corr_throughput_corr = disk_spec_r2  / PSF_convolution_ratio  / throughput_factor_1D
@@ -218,18 +195,10 @@ def extract_spec_no_stellar_color(disk_residual_cube, residual_cube_disk_subtrac
     else:
         num_region = np.count_nonzero(disk_extract_mask)
 
-
     # if outpur total flux within the aperture in the unit of Jy
     output_disk_spectrum[:,0] = z_wave
     output_disk_spectrum[:,1] = output_disk_spec_r2_corr_throughput_corr *  2.352e-5 *0.1**2  
     output_disk_spectrum[:,2] = new_std_1D * 2.352e-5 *0.1**2    # 1 MJy/sr = 2.352e-5 Jy/arcsec^2
-
-
-    # if output the average surface brighness within the aperture
-    # output_disk_spectrum[:,0] = z_wave
-    # output_disk_spectrum[:,1] = disk_spec_r2  / PSF_convolution_ratio  / throughput_factor_1D *  2.352e-5  /num_region #*0.1**2  
-    # output_disk_spectrum[:,2] = new_std_1D *stellar_spec_1D  * 2.352e-5 /num_region#*0.1**2    # 1 MJy/sr = 2.352e-5 Jy/arcsec^2
-
 
 
     ########################################
@@ -242,12 +211,7 @@ def extract_spec_no_stellar_color(disk_residual_cube, residual_cube_disk_subtrac
     throughput_factor_1D[715] = np.ones((1)) * (throughput_factor_1D[716]) 
     throughput_factor_1D[597:599 ] = np.ones((2)) * (throughput_factor_1D[711])
 
-    # for outmost region that is also affected by outliers 
-    if extract_region == 'outx2_E' or extract_region == 'outx2':
-        output_disk_spectrum[297:302,:] = np.ones((5, 3)) * (output_disk_spectrum[296,:]) 
-        throughput_factor_1D[297:302] = np.ones((5)) * (throughput_factor_1D[296]) 
- 
-    
+
     return output_disk_spectrum, throughput_factor_1D
 
 
