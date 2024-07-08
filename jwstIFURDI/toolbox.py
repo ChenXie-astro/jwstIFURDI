@@ -79,7 +79,7 @@ def shift(array, shift_value, method='roll', ):
     '''
     Shift a 1D or 2D input array.
     
-    The array can be shift either using roll.
+    The array can be shifted using roll.
 
     Note that if the shifting value is an integer, the function uses
     numpy roll procedure to shift the array. The user can force to use

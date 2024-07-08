@@ -32,7 +32,7 @@ def calculate_psf_covolution_ratio(x_all, psf_filename, savepath, disk_extract_m
 
 
     """
-    The input empirical NIRSpec PSF has an 0.5 pix offset in the center.
+    The input empirical NIRSpec PSF has a 0.5 pix offset in the center.
     """
     offset_x_sci = -0.5
     offset_y_sci = -0.5
@@ -42,9 +42,9 @@ def calculate_psf_covolution_ratio(x_all, psf_filename, savepath, disk_extract_m
     fits.writeto(savepath+'disk_model_convolved_3D_aligned.fits', convolved_models_shift, overwrite=True)
 
 
-    ###### runing a sanity check  ######
+    ###### running a sanity check  ######
     """
-    test result indicates that fft can preserve the flux. 
+    The test result indicates that fft can preserve the flux. 
     """
     offset_x_sci = +0.5
     offset_y_sci = +0.5

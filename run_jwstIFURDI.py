@@ -1,12 +1,14 @@
 import os
 import numpy as np
 from time import time
+from pathlib import Path
 import diskmap
 from astropy.io import fits
 from jwstIFURDI.centering import IFU_centering
 from jwstIFURDI.cal_PSF_convolution_effect import calculate_psf_covolution_ratio
 from jwstIFURDI.toolbox import shift, plot_scaling_factor, plot_throughput, plot_multiple_spectrum_errorbar_old
 from jwstIFURDI.form_cubes import r2_correction_map_2D, single_frame_sub, extract_spec
+
 
 
 if __name__ == "__main__":
@@ -16,19 +18,19 @@ if __name__ == "__main__":
     root = '/Users/sxie/Desktop/example/'
 
     # Step 1:
-    perform_centering = False
+    perform_centering = True
     
     # Step 2:
-    cal_PSF_convolution_effect = False
+    perform_RDI = True
 
     # Step 3:
-    creating_r2_scaling_map = False
+    cal_PSF_convolution_effect = True
 
     # Step 4:
-    perform_RDI = False
+    creating_r2_scaling_map = True
 
     # Step 5:
-    calculate_throughput_from_MCMC_output = False
+    calculate_uncertainty_cube_from_MCMC_output = True
 
     # Step 6:
     extract_disk_spectrum = True
@@ -39,9 +41,7 @@ if __name__ == "__main__":
         sci_filename = root + 'data/HD181327_newoutput_prism-clear_s3d.fits'
         ref_filename = root + 'data/iotmic_newoutput_prism-clear_s3d.fits'
         savepath = root +  'centering/'
-        if os.path.exists(savepath):
-            pass
-        else:
+        if not os.path.exists(savepath):
             os.makedirs(savepath)
 
         ########################################
@@ -64,87 +64,6 @@ if __name__ == "__main__":
         print('########  centering completed  ########')
 
 
-    if cal_PSF_convolution_effect:
-        print('########  calculating PSF convolution effect  ########')
-        savepath = root + 'PSF_convolution/'
-        if os.path.exists(savepath):
-            pass
-        else:
-            os.makedirs(savepath)
-
-        #######################################
-        ##### input disk model parameters ##### 
-        #######################################
-        # # disk model parameters:
-        # g1 = 0.33; alpha_in = 16.2; alpha_out = -4.5;  flux = 2.3e6
-        # see MMB_anadisk_model.py for details 
-        x_all = [0.33, 16.2, -4.5, 2.3e6]
-
-        #####################################
-        ##### input empirical PSF model ##### 
-        #####################################
-        psf_filename = root + 'data/HD181327_check_psf_masked.fits'
- 
-        #######################################
-        ##### input scicube and disk mask ##### 
-        #######################################
-        sci_filename = root +  'centering/sci_cube_expend_HD181327_IFU_align_aligned.fits'
-        scicube, sci_header = fits.getdata(sci_filename, header=True) # provide the header
-
-        # spectral extracting region
-        disk_extract_mask = '/Users/sxie/Desktop/JWST/ms_post_processing/make_disk_mask/masks/disk_source_mask_onlydisk_mid.fits'
-        extracting_region = 'mid'
-
-        PSF_convolution_ratio = calculate_psf_covolution_ratio(x_all, psf_filename, savepath, disk_extract_mask, sci_header, sci_target_name, extracting_region)
-        print('########  calculation completed  ########')
-
-
-    if creating_r2_scaling_map:
-        print('########  creating the r2 scaling map for illumination correction  ########')
-        """
-        the diskmap package was used (https://diskmap.readthedocs.io/en/latest/index.html)
-        """
-
-        savepath = root + 'r2_scale/'
-        if os.path.exists(savepath):
-            pass
-        else:
-            os.makedirs(savepath)
-
-        ##############################################
-        ####### input HD181327 disk parameters #######
-        ##############################################
-        mapping = diskmap.DiskMap(fitsfile=root + 'centering/sci_cube_expend_{0}_aligned.fits'.format(sci_target_name),
-                        pixscale=0.10435,
-                        inclination=30.2,
-                        # pa = 99.1-111.2294
-                        pos_angle=99.1-111.2294, # 111.2294 is the angular offest between the detector frame and the ture north
-                        distance=47.72,
-                        image_type='total')
-        mapping.map_disk(power_law=(0., 0.04, 1.),  # ~4 au scale height at 86 au.
-                radius=(1., 500., 500))
-        mapping.write_output(filename= savepath + '{0}'.format(sci_target_name))
-
-        
-        """
-        The output of diskmap has a 1 pix offset compared to the image chenter, which is the star position. 
-        Shifting the image using 'roll' funtion is nesseary
-        Visual inspection is recommended. 
-        """
-
-        radius_img = fits.getdata(savepath + 'HD181327_IFU_align_radius.fits') # not algined
-        scat_img = fits.getdata(savepath + 'HD181327_IFU_align_scat_angle.fits') # not algined
-        shift_offset = (1, 1)
-        shift_value = np.round(shift_offset).astype(int)
-        shifted_radius_img = shift(radius_img, shift_value, method='roll')
-        shifted_scat_img = shift(scat_img, shift_value, method='roll')
-
-        # output final results: the stellocentric distance map and the sactering angle map
-        fits.writeto(savepath + 'HD181327_IFU_align_radius_aligned.fits', shifted_radius_img, overwrite=True) # aligned
-        fits.writeto(savepath + 'HD181327_IFU_align_scat_angle_aligned.fits', shifted_scat_img, overwrite=True) # aligned
-        print('########  radius map created  ########')
-
-
     if perform_RDI:
         print('########  performing RDI PSF subtraction  ########')
         """
@@ -153,9 +72,7 @@ if __name__ == "__main__":
         # directory path 
         # path_model = root + '/anadisk_modeling/output_cubes/'
         savepath = root + "/reflectance_measurement/"
-        if os.path.exists(savepath):
-            pass
-        else:
+        if not os.path.exists(savepath):
             os.makedirs(savepath)
 
         # input data cubes 
@@ -182,24 +99,115 @@ if __name__ == "__main__":
         new_res_cube, scaling_factor, cost = single_frame_sub(sci_cube_raw, ref_cube_raw, mask_cube)
         plot_scaling_factor(z_wave[20:-21], scaling_factor[20:-21], 'scaling_factor',  savepath, )
 
+        # output residual disk cube
         fits.writeto(savepath + 'residual_single_frame_sub_RDI_{0}.fits'.format(sci_target_name), new_res_cube, header_sci, overwrite=True )
         fits.writeto(savepath + 'residual_single_frame_sub_RDI_{0}_spike_masked.fits'.format(sci_target_name), new_res_cube*spike_mask, header_sci, overwrite=True )
         fits.writeto(savepath + 'residual_single_frame_sub_RDI_mean_combined_{0}_spike_masked.fits'.format(sci_target_name), np.nanmean(new_res_cube, axis=0)*spike_mask, header_sci, overwrite=True )
         print('########  RDI completed  ########')
 
 
-    if calculate_throughput_from_MCMC_output:
+    if cal_PSF_convolution_effect:
+        print('########  calculating PSF convolution effect  ########')
+        savepath = root + 'PSF_convolution/'
+        if not os.path.exists(savepath):
+            os.makedirs(savepath)
+
+        #######################################
+        ##### input disk model parameters ##### 
+        #######################################
+        # # disk model parameters:
+        # g1 = 0.33; alpha_in = 16.2; alpha_out = -4.5;  flux = 2.3e6
+        # see MMB_anadisk_model.py for details 
+        x_all = [0.33, 16.2, -4.5, 2.3e6]
+
+        #####################################
+        ##### input empirical PSF model ##### 
+        #####################################
+        psf_filename = root + 'data/HD181327_psf_masked.fits'
+ 
+        #######################################
+        ##### input scicube and disk mask ##### 
+        #######################################
+        sci_filename = root +  'centering/sci_cube_expend_HD181327_IFU_align_aligned.fits'
+        scicube, sci_header = fits.getdata(sci_filename, header=True) # provide the header
+
+        #############################################################################################
+        ######   calculating the PSF convolution effect for all spectral extracting regions    ######
+        #############################################################################################
+        # path to the files.
+        dir_name= root + 'data/masks/'
+        #get all the uncal files in a list
+        #should only be the nrs_1 files
+        paths = Path(dir_name).glob('disk_source_mask_onlydisk_*.fits')
+        disk_extracting_region_file_path_list = []
+        # iterating over all files
+        for path in paths:
+            disk_extracting_region_file_path_list.append(str(path))
+
+        for disk_extract_mask in disk_extracting_region_file_path_list:
+            extracting_region = disk_extract_mask.split('/')[-1][26:-5]
+            PSF_convolution_ratio = calculate_psf_covolution_ratio(x_all, psf_filename, savepath, disk_extract_mask, sci_header, sci_target_name, extracting_region)
+
+        print('########  calculation completed  ########')
+
+
+    if creating_r2_scaling_map:
+        print('########  creating the r2 scaling map for illumination correction  ########')
         """
-        Note: running this step requires to perform the throughput estimation using MCMC_Code_fixed_disk.py beforehand.
+        the diskmap package was used (https://diskmap.readthedocs.io/en/latest/index.html)
+        """
+
+        savepath = root + 'r2_scale/'
+        if not os.path.exists(savepath):
+            os.makedirs(savepath)
+
+        ##############################################
+        ####### input HD181327 disk parameters #######
+        ##############################################
+        mapping = diskmap.DiskMap(fitsfile=root + 'centering/sci_cube_expend_{0}_aligned.fits'.format(sci_target_name),
+                        pixscale=0.10435,
+                        inclination=30.2,
+                        # pa = 99.1-111.2294
+                        pos_angle=99.1-111.2294, # 111.2294 is the angular offest between the detector frame and the ture north
+                        distance=47.72,
+                        image_type='total')
+        mapping.map_disk(power_law=(0., 0.04, 1.),  # ~4 au scale height at 86 au.
+                radius=(1., 500., 500))
+        mapping.write_output(filename= savepath + '{0}'.format(sci_target_name))
+ 
+        """
+        The output of diskmap has a 1 pix offset compared to the image center, which is the star position. 
+        Shifting the image using 'roll' funtion is necessary
+        Visual inspection is recommended. 
+        """
+        radius_img = fits.getdata(savepath + 'HD181327_IFU_align_radius.fits') # not aligned
+        scat_img = fits.getdata(savepath + 'HD181327_IFU_align_scat_angle.fits') # not  aligned
+        shift_offset = (1, 1)
+        shift_value = np.round(shift_offset).astype(int)
+        shifted_radius_img = shift(radius_img, shift_value, method='roll')
+        shifted_scat_img = shift(scat_img, shift_value, method='roll')
+
+        # output final results: the stellocentric distance map and the scattering angle map
+        fits.writeto(savepath + 'HD181327_IFU_align_radius_aligned.fits', shifted_radius_img, overwrite=True) # aligned
+        fits.writeto(savepath + 'HD181327_IFU_align_scat_angle_aligned.fits', shifted_scat_img, overwrite=True) # aligned
+
+        ref_radius = 81.656
+        radius_map = fits.getdata(root + 'r2_scale/HD181327_IFU_align_radius_aligned.fits')
+        weight_map = r2_correction_map_2D(radius_map, ref_radius, function_index=2)
+        fits.writeto(savepath + '{0}_r2_correction_weight_map_2D_ref_radius_{1}au.fits'.format(sci_target_name, ref_radius), weight_map, overwrite=True )
+        print('########  radius map created  ########')
+
+
+    if calculate_uncertainty_cube_from_MCMC_output:
+        """
+        Note: running this step requires performing the throughput estimation using MCMC_Code_fixed_disk.py beforehand.
         Input: MCMC results.
 
         Output: uncertainty cubes and disk-free residual cubes.
         Note: the output uncertainty cube was then used for MCMC throughput estimation in an iterative way.
         """
         path_model = root + '/anadisk_modeling/output_cubes/'
-        if os.path.exists(path_model):
-            pass
-        else:
+        if not os.path.exists(path_model):
             os.makedirs(path_model)
 
         band_width = 100 # number of spectral channels used in calculating std in the spectral direction
@@ -228,7 +236,7 @@ if __name__ == "__main__":
             else: 
                 new_std_cube[z] = np.nanstd(residual_cube[(z-band_width//2) : (z+band_width//2) ], axis=0)
 
-        # output unccertainty cube and disk-free residual cubes 
+        # output uncertainty cube for MCMC disk modeling and a disk-free residual cube with spikes masked
         fits.writeto(root + 'anadisk_modeling/{0}_residual_cube_after_FM_spike_masked.fits'.format(sci_target_name), residual_cube*spike_mask, overwrite=True )
         fits.writeto(root + 'anadisk_modeling/{0}_uncertainty_cube.fits'.format(sci_target_name), new_std_cube, overwrite=True )
 
@@ -237,12 +245,10 @@ if __name__ == "__main__":
     if extract_disk_spectrum:
         print('########  extracting disk spectra at different stellocentric distances  ########')
         """
-        Once we satisfied with the disk model we built in Step #5, we can start to extract the disk reflectance spectrum. 
+        Once we are satisfied with the disk model we built in Step #5 and MCMC disk modeling, we can start to extract the disk reflectance spectrum. 
         """
         savepath = root + "reflectance_measurement/"
-        if os.path.exists(savepath):
-            pass
-        else:
+        if not os.path.exists(savepath):
             os.makedirs(savepath)
 
         # input residual cube and science cube header 
@@ -250,17 +256,15 @@ if __name__ == "__main__":
         nz, ny, nx = sci_cube_raw.shape
         z_wave = np.arange(header_sci['CRVAL3'], header_sci['CRVAL3']+ (nz)*header_sci['CDELT3'], header_sci['CDELT3'], )
 
-        new_res_cube = fits.getdata(root + 'reflectance_measurement/residual_single_frame_sub_RDI_{0}.fits'.format(sci_target_name))
+        new_res_cube = fits.getdata(root + 'reflectance_measurement/residual_single_frame_sub_RDI_{0}.fits'.format(sci_target_name)) # output from Step 2
         disk_residual_cube = new_res_cube
 
-        # Apparent stellar photosphere model specturm (stellar color correction)
+        # Apparent stellar photosphere model spectrum (stellar color correction)
         stellar_spec_1D = fits.getdata(root + 'data/BT-Settl_6400K_logg4.5_meta_-0.0.fits') # HD181327 host star
 
         # creating weight map for illumination correction (r2 scaling)
         ref_radius = 81.656
-        radius_map = fits.getdata(root + 'r2_scale/HD181327_IFU_align_radius_aligned.fits')
-        weight_map = r2_correction_map_2D(radius_map, ref_radius, function_index=2)
-        fits.writeto(savepath + '{0}_r2_correction_weight_map_2D_ref_radius_{1}au.fits'.format(sci_target_name, ref_radius), weight_map, overwrite=True )
+        weight_map = fits.getdata(root + 'r2_scale/{0}_r2_correction_weight_map_2D_ref_radius_{1}au.fits'.format(sci_target_name, ref_radius) ) 
 
         # input best-fit disk model for performing throughput correction and uncertainty estimation
         path_model = root + 'anadisk_modeling/output_cubes/'

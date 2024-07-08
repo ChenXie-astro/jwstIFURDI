@@ -18,9 +18,9 @@ def samplingRegion(size_window, theta = [45, 135], m = 0.2, M = 0.8, step = 1, d
         size_window: the radius of the sampling region. The whole region should thus have a length of 2*size_window+1.
         theta: the angle range of the sampling region, default: [45, 135] for the anti-diagonal and diagonal directions.
         m: the minimum fraction of size_window, default: 0.2 (i.e., 20%). In this way, the saturated region can be excluded.
-        M: the maximum fraction of size_window, default: 0.8 (i.e., 80%). Just in case if there's some star along the diagonals.
-        step: the seperation between sampling dots (units: pixel), default value is 1pix.
-        decimals: the precisoin of the sampling dots (units: pixel), default value is 0.01pix.
+        M: the maximum fraction of size_window, default: 0.8 (i.e., 80%). Just in case there's some star along the diagonals.
+        step: the separation between sampling dots (units: pixel), default value is 1pix.
+        decimals: the precision of the sampling dots (units: pixel), default value is 0.01pix.
         ray: only half of the line?
     Output: (xs, ys)
         xs: x indecies, flattend.
@@ -351,7 +351,7 @@ def IFU_centering(sci_filename, ref_filename,   savepath,  sci_target_name, thet
     ref_cube_mask_shifted[ref_cube_mask_shifted != 0] = 1
 
 
-    # search for the PA offsets between sci and ref osbervations
+    # search for the PA offsets between sci and ref observations
     offset_x_sci, offset_y_sci, offset_x_ref, offset_y_ref = find_center(new_aligned_sci_cube[channel_shortest:channel_longest], new_aligned_ref_cube[channel_shortest:channel_longest], theta_ifu_sci, theta_ifu_ref, x_center, y_center, filter_size, savepath, sci_target_name)
     output_information('final alignment residual', nx, ny, offset_x_sci, offset_y_sci, offset_x_ref, offset_y_ref)
 
@@ -366,10 +366,10 @@ def IFU_centering(sci_filename, ref_filename,   savepath,  sci_target_name, thet
 
 
 
-    # search for the PA offsets between sci and ref osbervations
+    # search for the PA offsets between sci and ref observations
     def cost_function_theta(theta,):
         """
-        Returns the vaule of the cost function used for the single ref frame RDI approch.
+        Returns the value of the cost function used for the single ref frame RDI approch.
 
         Args:
             nu: scaling factor 
@@ -378,7 +378,7 @@ def IFU_centering(sci_filename, ref_filename,   savepath,  sci_target_name, thet
 
         Written: Chen Xie, 2023-10.
 
-        Note that: 'sci_image' (sci image), 'ref_img' (ref), 'mask_img' (mask) are global variables in this nested function that will be updated in each interation.
+        Note that: 'sci_image' (sci image), 'ref_img' (ref), 'mask_img' (mask) are global variables in this nested function that will be updated in each iteration.
         """
         theta = np.ones((1)) * theta
         tmp, ref_rotated = derotate_and_combine(weight_map_ref_shifted.reshape((1,ny,nx)), theta, method='median')

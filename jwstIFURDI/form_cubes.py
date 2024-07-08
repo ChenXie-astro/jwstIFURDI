@@ -11,7 +11,7 @@ def make_spike_mask(input_cube, filter_size):
     for z in range(nz):
         median_filtered_cube[z,:,:] = input_cube[z,:,:] - ndimage.median_filter(input_cube[z,:,:], filter_size, mode='nearest')
     med_filtered_combined_img = np.nanmean(median_filtered_cube, axis=0)  # HD181327
-    # med_filtered_combined_img = np.nanmedian(median_filtered_cube, axis=0)  # betapic current IFU-sligned cube has outliers! So median combinition
+    # med_filtered_combined_img = np.nanmedian(median_filtered_cube, axis=0)  # betapic current IFU-sligned cube has outliers! So median combination
     spike_mask = np.ones((ny,nx))
     spike_mask[med_filtered_combined_img>40] = 0  # HD181327
     # spike_mask[med_filtered_combined_img>100] = 0  # beta pic
@@ -43,7 +43,7 @@ def r2_correction_map_2D(input_radius_map, ref_radius, function_index):
 def single_frame_sub(sci_cube, ref_cube, mask_cube, ):
     
     """
-    Returns the residual images by using the single ref frame RDI approch.
+    Returns the residual images by using the single ref frame RDI approach.
     Used for processing JWST/NIRSpec IFU data cube. 
 
     Args:
@@ -61,7 +61,7 @@ def single_frame_sub(sci_cube, ref_cube, mask_cube, ):
     
     def cost_function_subtraction(nu,):
         """
-        Returns the vaule of the cost function used for the single ref frame RDI approch.
+        Returns the value of the cost function used for the single ref frame RDI approach.
 
         Args:
             nu: scaling factor 
@@ -70,7 +70,7 @@ def single_frame_sub(sci_cube, ref_cube, mask_cube, ):
 
         Written: Chen Xie, 2023-10.
 
-        Note that: 'sci_image' (sci image), 'ref_img' (ref), 'mask_img' (mask) are global variables in this nested function that will be updated in each interation.
+        Note that: 'sci_image' (sci image), 'ref_img' (ref), 'mask_img' (mask) are global variables in this nested function that will be updated in each iteration.
         """
         return np.log(np.nansum( ((nu * ref_img  - sci_img) * mask_img)**2  , axis=(0,1)))
 
@@ -136,7 +136,7 @@ def extract_spec(disk_residual_cube, residual_cube_disk_subtracted, disk_model_r
     else:
         num_region = np.count_nonzero(disk_extract_mask)
 
-    # if outpur total flux within the aperture in the unit of Jy
+    # if output total flux within the aperture in the unit of Jy
     output_disk_spectrum[:,0] = z_wave
     output_disk_spectrum[:,1] = output_disk_spec_r2_corr_throughput_corr *  2.352e-5 *0.1**2   # pixel size 0.1" x 0.1"
     output_disk_spectrum[:,2] = new_std_1D * 2.352e-5 *0.1**2    # 1 MJy/sr = 2.352e-5 Jy/arcsec^2
@@ -195,7 +195,7 @@ def extract_spec_no_stellar_color(disk_residual_cube, residual_cube_disk_subtrac
     else:
         num_region = np.count_nonzero(disk_extract_mask)
 
-    # if outpur total flux within the aperture in the unit of Jy
+    # if output total flux within the aperture in the unit of Jy
     output_disk_spectrum[:,0] = z_wave
     output_disk_spectrum[:,1] = output_disk_spec_r2_corr_throughput_corr *  2.352e-5 *0.1**2  
     output_disk_spectrum[:,2] = new_std_1D * 2.352e-5 *0.1**2    # 1 MJy/sr = 2.352e-5 Jy/arcsec^2

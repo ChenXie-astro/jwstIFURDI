@@ -10,7 +10,7 @@ def generateModel(x_all):
     distance = 47.72 #pc
     g_1 = x_all[0] #forward scattering coefficient (from 0 to 1)
     pa = 99.1-111.2294 # position angle of the disk in degrees, counted from +y axis counterclockwise
-    # 111.2294 is the angular offest between the detector frame and the ture north
+    # 111.2294 is the angular offset between the detector frame and the true north
     
     inc = 30.2  # inclination of the disk in degrees, counted from face-on (0 degree) to edge-on (90 degree)
     alpha_in = x_all[1] #rising component r^alphaIn (value > 0)

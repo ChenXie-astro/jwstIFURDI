@@ -17,7 +17,7 @@ from jwstIFURDI.MMB_anadisk_model import generateModel
 def single_frame_sub(sci_cube, ref_cube, mask_cube, ):
     
     """
-    Returns the residual images by using the single ref frame RDI approch.
+    Returns the residual images by using the single ref frame RDI approach.
     Used for processing JWST/NIRSpec IFU data cube. 
 
     Args:
@@ -35,7 +35,7 @@ def single_frame_sub(sci_cube, ref_cube, mask_cube, ):
     
     def cost_function_subtraction(nu,):
         """
-        Returns the vaule of the cost function used for the single ref frame RDI approch.
+        Returns the value of the cost function used for the single ref frame RDI approach.
 
         Args:
             nu: scaling factor 
@@ -44,7 +44,7 @@ def single_frame_sub(sci_cube, ref_cube, mask_cube, ):
 
         Written: Chen Xie, 2023-10.
 
-        Note that: 'sci_image' (sci image), 'ref_img' (ref), 'mask_img' (mask) are global variables in this nested function that will be updated in each interation.
+        Note that: 'sci_image' (sci image), 'ref_img' (ref), 'mask_img' (mask) are global variables in this nested function that will be updated in each iteration.
         """
         return np.log(np.nansum( ((nu * ref_img  - sci_img) * mask_img)**2  , axis=(0,1)))
 
@@ -92,8 +92,8 @@ def single_frame_sub(sci_cube, ref_cube, mask_cube, ):
 
 def res(model):
     """
-    The input empirical NIRSpec PSF has an 0.5 pix offset in the center.
-    Added by CHen Xie: 2024-05-31
+    The input empirical NIRSpec PSF has a 0.5 pix offset in the center.
+    Added by Chen Xie: 2024-05-31
     """
     offset_x_sci = -0.5
     offset_y_sci = -0.5
@@ -174,7 +174,7 @@ if __name__ == '__main__':
 
     sci_cube_raw = fits.getdata(root+ '/centering/sci_cube_expend_{0}_aligned.fits'.format(sci_target_name))
     ref_cube_raw = fits.getdata(root+ '/centering/ref_cube_expend_{0}_aligned.fits'.format(sci_target_name))
-    psfs_raw = fits.getdata(root+ 'data/HD181327_check_psf_masked.fits')
+    psfs_raw = fits.getdata(root+ 'data/HD181327_psf_masked.fits')
     sigma = fits.getdata(root+ 'anadisk_modeling/{0}_uncertainty_cube.fits'.format(sci_target_name))
 
     nz, ny, nx = sci_cube_raw.shape
@@ -304,7 +304,6 @@ if __name__ == '__main__':
         fits.writeto(savepath + 'HD181327_mcmc_values_{0}.fits'.format(channel_number), mcmc_values, overwrite=True)
         fits.writeto(savepath + 'HD181327_best_fit_values_addtion_{0}.fits'.format(channel_number),  best_fit_values, overwrite=True)
         fits.writeto(savepath + 'sigma_{0}.fits'.format(channel_number), unc, overwrite=True)
-        # fits.writeto(savepath + 'HD181327_disk_model_best_fit_{0}_convolved.fits'.format(channel_number), convolved_model0, overwrite=True)
         fits.writeto(savepath + 'HD181327_disk_model_best_fit_{0}_convolved_aligned.fits'.format(channel_number), convolved_model0_shifted, overwrite=True)
  
 
@@ -376,7 +375,11 @@ if __name__ == '__main__':
     #########################
     ####### output cube #####
     #########################
+    # best fit disk parameters obtained with MCMC (per wavelength)
     fits.writeto(savepath + '{0}_mcmc_para.fits'.format(sci_target_name), mcmc_papa, overwrite=True)
+    # reduced chi-square and flux scaling factor (per wavelength)
     fits.writeto(savepath + '{0}_chi2v_scaling.fits'.format(sci_target_name), chi2v_scaling, overwrite=True)
+    # residual images of the disk-free data cube
     fits.writeto(savepath + '{0}_residual_cube_after_FM.fits'.format(sci_target_name), residual_cube, overwrite=True)
+    # best fit convolved disk model 
     fits.writeto(savepath + '{0}_best_fit_disk_model.fits'.format(sci_target_name), disk_model, overwrite=True)
