@@ -38,7 +38,7 @@ Run MCMC disk modeling
 ----------------------
 To estimate the flux loss caused by RDI, we need to perform the negative injection. \
 The following code performs the negative disk injection using the MCMC analysis to estimate the disk parameters. \
-In addition to the science and reference data cubes, we also need to provide the empirical IFU PSF and the uncertainty map/cube. \
+In addition to the science and reference data cubes, we also need to provide the empirical IFU PSF and the uncertainty map/cube. 
 
 To perform MCMC disk modeling
 ```
@@ -56,7 +56,8 @@ To perform RDI and extract the target spectrum
 ```
 % python run_jwstIFURDI.py
 ```
-Post-processing parameters can be modified in the Python script. The above process can be divided into 6 steps.
+Post-processing parameters can be modified in the Python script.\
+The above process can be divided into 6 steps:
 
 **Step 1**: image alignment\
 Info: centering both science and reference cubes to the image center. The star position was determined by using the diffraction spikes and [centerRadon](https://github.com/seawander/centerRadon).\
