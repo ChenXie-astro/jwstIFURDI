@@ -36,9 +36,9 @@ Tested: Python 3.7.7, numpy 1.21.6, scipy 1.7.3, matplotlib 3.3.0, scikit-image 
 
 Run MCMC disk modeling
 ----------------------
-To estimate the flux loss caused by RDI, we need to perform the negative injection. 
-The following code performs the negative disk injection using the MCMC analysis to estimate the disk parameters. 
-In addition to the science and reference data cubes, we also need to provide the empirical IFU PSF and the uncertainty map/cube. 
+To estimate the flux loss caused by RDI, we need to perform the negative injection. \
+The following code performs the negative disk injection using the MCMC analysis to estimate the disk parameters. \
+In addition to the science and reference data cubes, we also need to provide the empirical IFU PSF and the uncertainty map/cube. \
 
 To perform MCMC disk modeling
 ```
@@ -58,38 +58,38 @@ To perform RDI and extract the target spectrum
 ```
 Post-processing parameters can be modified in the Python script. The above process can be divided into 6 steps.
 
-**Step 1**: image alignment
-Info: centering both science and reference cubes to the image center. The star position was determined by using the diffraction spikes and [centerRadon](https://github.com/seawander/centerRadon).
+**Step 1**: image alignment\
+Info: centering both science and reference cubes to the image center. The star position was determined by using the diffraction spikes and [centerRadon](https://github.com/seawander/centerRadon).\
 Output: aligned science and reference cubes
 
-**Step 2**: RDI subtraction
-RDI: residual_image  = sicence_image - scaling_factor * refernce_image
-Info: Step 2 can be performed right after step 1.
-input: aligned science and reference cubes, a spike mask, and an annular mask for fitting the scaling factor in RDI
-output: residual disk cube after RDI
+**Step 2**: RDI subtraction\
+RDI: residual_image  = sicence_image - scaling_factor * refernce_image\
+Info: Step 2 can be performed right after step 1.\
+Input: aligned science and reference cubes, a spike mask, and an annular mask for fitting the scaling factor in RDI\
+Output: residual disk cube after RDI
 
-**Step 3**: calculate the PSF convolution effect
-Info: IFU PSF is wavelength dependent and a fixed aperture was used in extracting the disk spectrum. Thus, the PSF convolution effect needs to be corrected.
-Input: disk model parameters and masks of disk spectral extracting regions
-Output: The PSF convolution correction factor as a function of wavelength
+**Step 3**: calculate the PSF convolution effect\
+Info: IFU PSF is wavelength dependent and a fixed aperture was used in extracting the disk spectrum. Thus, the PSF convolution effect needs to be corrected.\
+Input: disk model parameters and masks of disk spectral extracting regions\
+Output: The PSF convolution correction factor as a function of wavelength\
 Step 3 prepares the correction file for Step 6 
 
-**Step 4**: create a r^0.5 correction map to correct the illumination effect
-This step uses [diskmap](https://diskmap.readthedocs.io/en/latest/) to calculate the stellocentric distances, thus the r^0.5 correction map.
+**Step 4**: create a r^0.5 correction map to correct the illumination effect\
+This step uses [diskmap](https://diskmap.readthedocs.io/en/latest/) to calculate the stellocentric distances, thus the r^0.5 correction map.\
 Input: disk parameters
-Output: radius map and r^0.5 correction map. 
+Output: radius map and r^0.5 correction map. \
 Step 4 prepares the correction file for Step 6 
 
-**Step 5**: calculate the uncertainty cube for MCMC disk modeling 
-The uncertainty map/cube can be estimated by applying the standard deviation per spatial pixel in the spectral direction on the residual cube of the disk-subtracted data cube
-Input: MCMC results 
-Outputs: uncertainty cube 
+**Step 5**: calculate the uncertainty cube for MCMC disk modeling \
+The uncertainty map/cube can be estimated by applying the standard deviation per spatial pixel in the spectral direction on the residual cube of the disk-subtracted data cube\
+Input: MCMC results \
+Output: uncertainty cube \
 Step 5 prepares the uncertainty cube for MCMC disk modeling 
 
 **Step 6**: 
-Extracting the disk reflectance spectrum with four flux corrections (see Xie et al., **in prep** for details)
-Input: residual disk cube (from Step 2), residual disk-free cube (from MCMC disk modeling), best-fit disk model (from MCMC disk modeling), stellar photosphere model, PSF convolution correction cube (from Step 3), the illumination correction map (from Step 4), masks of disk spectral extraction regions 
-Outputs: disk reflectance spectrum, RDI throughout 
+Extracting the disk reflectance spectrum with four flux corrections (see Xie et al., **in prep** for details)\
+Input: residual disk cube (from Step 2), residual disk-free cube (from MCMC disk modeling), best-fit disk model (from MCMC disk modeling), stellar photosphere model, PSF convolution correction cube (from Step 3), the illumination correction map (from Step 4), masks of disk spectral extraction regions.
+Output: disk reflectance spectrum, RDI throughout 
 
 
 
