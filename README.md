@@ -92,6 +92,8 @@ Extracting the disk reflectance spectrum with four flux corrections (see Xie et 
 Input: residual disk cube (from Step 2), residual disk-free cube (from MCMC disk modeling), best-fit disk model (from MCMC disk modeling), stellar photosphere model, PSF convolution correction cube (from Step 3), the illumination correction map (from Step 4), masks of disk spectral extraction regions.
 Output: disk reflectance spectrum, RDI throughout 
 
+**Note**: above each step can be performed separately with proper inputs.
+
 
 
 Credits
