@@ -27,7 +27,7 @@ setup(
     keywords='jwst NIRSpec ifu rdi reduction disk pipeline',
     packages=['jwstIFURDI'],
     install_requires=[
-        'numpy', 'scipy', 'astropy', 'pandas', 'matplotlib', 'scikit-image', 'debrisdiskfm', 'emcee', 'corner', 'diskmap'
+        'numpy', 'scipy', 'astropy', 'matplotlib', 'scikit-image', 'debrisdiskfm', 'emcee', 'corner', 'diskmap'
     ],
     include_package_data=True,
     # package_data={
