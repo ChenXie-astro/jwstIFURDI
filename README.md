@@ -75,10 +75,10 @@ Input: disk model parameters and masks of disk spectral extracting regions\
 Output: The PSF convolution correction factor as a function of wavelength\
 Step 3 prepares the correction file for Step 6 
 
-**Step 4**: create a r^0.5 correction map to correct the illumination effect\
-This step uses [diskmap](https://diskmap.readthedocs.io/en/latest/) to calculate the stellocentric distances, thus the r^0.5 correction map.\
+**Step 4**: create a r^2 correction map to correct the illumination effect\
+This step uses [diskmap](https://diskmap.readthedocs.io/en/latest/) to calculate the stellocentric distances, thus the r^2 correction map.\
 Input: disk parameters
-Output: radius map and r^0.5 correction map. \
+Output: radius map and r^2 correction map. \
 Step 4 prepares the correction file for Step 6 
 
 **Step 5**: calculate the uncertainty cube for MCMC disk modeling \
@@ -98,11 +98,29 @@ Output: disk reflectance spectrum, RDI throughout
 
 Credits
 -------
-If you use DDRM in your research, please cite
+If you use jwstIFURDI in your research, please cite
 
-Xie et al. **in prep.**
+[Xie et al. 2025](https://www.nature.com/articles/s41586-025-08920-4)
 
-
+```
+@article{Xie2025,
+	author = {Xie, Chen and Chen, Christine H. and Lisse, Carey M. and Hines, Dean C. and Beck, Tracy and Betti, Sarah K. and Pinilla-Alonso, Noem{\'\i} and Ingebretsen, Carl and Worthen, Kadin and G{\'a}sp{\'a}r, Andr{\'a}s and Wolff, Schuyler G. and Bolin, Bryce T. and Pueyo, Laurent and Perrin, Marshall D. and Stansberry, John A. and Leisenring, Jarron M.},
+	date = {2025/05/01},
+	date-added = {2025-05-14 11:29:27 -0400},
+	date-modified = {2025-05-14 11:29:27 -0400},
+	doi = {10.1038/s41586-025-08920-4},
+	id = {Xie2025},
+	isbn = {1476-4687},
+	journal = {Nature},
+	number = {8063},
+	pages = {608--611},
+	title = {Water ice in the debris disk around HD 181327},
+	url = {https://doi.org/10.1038/s41586-025-08920-4},
+	volume = {641},
+	year = {2025},
+	bdsk-url-1 = {https://doi.org/10.1038/s41586-025-08920-4}}
+}
+```
 
 In addition:
 If you aligned the cube using **jwstIFURDI.centering**, please also cite
