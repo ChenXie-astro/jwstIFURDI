@@ -88,7 +88,7 @@ Output: uncertainty cube \
 Step 5 prepares the uncertainty cube for MCMC disk modeling 
 
 **Step 6**: 
-Extracting the disk reflectance spectrum with four flux corrections (see Xie et al., **in prep** for details)\
+Extracting the disk reflectance spectrum with four flux corrections (see [Xie et al. 2025](https://www.nature.com/articles/s41586-025-08920-4) for details)\
 Input: residual disk cube (from Step 2), residual disk-free cube (from MCMC disk modeling), best-fit disk model (from MCMC disk modeling), stellar photosphere model, PSF convolution correction cube (from Step 3), the illumination correction map (from Step 4), masks of disk spectral extraction regions.
 Output: disk reflectance spectrum, RDI throughout 
 
